@@ -1,0 +1,1 @@
+struct quo_rem { ubigint quotient; ubigint remainder; };
