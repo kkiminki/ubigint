@@ -9,12 +9,20 @@ using namespace std;
 #include "ubigint.h"
 #include "debug.h"
 
-ubigint::ubigint (unsigned long that): uvalue (that) {
-   DEBUGF ('~', this << " -> " << uvalue)
+ubigint::ubigint (unsigned long that): ubig_value (that) {
+   DEBUGF ('~', this << " -> " << ubig_value)
 }
 
-ubigint::ubigint (const string& that): uvalue(0) {
-   for (char digit: that) uvalue = uvalue * 10 + digit - '0';
+ubigint::ubigint (const string& that): ubig_value(0) {
+   int i;
+   int place=0;
+   udigit digit;
+   for (i = ((int)that.size())-1;i>=0;i--){
+      place++;
+      digit = that[i];
+      ubig_value.push_back(place * 10 + digit - '0';
+   }
+   
 }
 
 ubigint ubigint::operator+ (const ubigint& that) const {
