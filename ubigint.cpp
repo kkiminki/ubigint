@@ -17,7 +17,7 @@ ubigint::ubigint (const string& that): ubig_value(0) {
    int i;
    int place=0;
    udigit digit;
-   for (i = ((int)that.size())-1;i>=0;i--){
+   for (i = that.size()-1;i>=0;i--){
       place++;
       digit = that[i];
       ubig_value.push_back(place * 10 + digit - '0';
@@ -25,25 +25,75 @@ ubigint::ubigint (const string& that): ubig_value(0) {
    
 }
 
+void trim(ubigint& item){
+   while(item.ubig_value.size()>0 and item.ubig_value.back()==0) item.ubig_value.pop_back();
+}
+
 ubigint ubigint::operator+ (const ubigint& that) const {
    //return ubigint (uvalue + that.uvalue);
    bool carry = false;
-   for (int i=0; i<ubig_value.size();i++){
-      
+   ubigint result;
+   udigit digit, this_digit, that_digit;
+   int loop_size = ubig_value.size() > that.ubig_value.size()? ubig_value.size() : that.ubig_value.size();
+   for (int i=0; i<loop_size;i++){
+      if (ubig_value.size() < i+1) {
+         this_digit=0;
+      }else{
+         this_digit = ubig_value.at(i);
+      }if(that.ubig_value.size() < i+1){
+         that_digit = 0;
+      }else{
+         that_digit = ubig_value.at(i);
+      }
+      digit = (this_digit + that_digit);
+      if(carry){
+         digit = digit + 1;
+         carry = false;
+      }
+      if(digit/10 > 0) carry = true;
+      digit = digit%10;
+      result.push_back(digit);
    }
+   trim(result);
+   return result;
 }
 
 ubigint ubigint::operator- (const ubigint& that) const {
    if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
-   return ubigint (uvalue - that.uvalue);
+   //return ubigint (uvalue - that.uvalue);
+   udigit digit, this_digit, that_digit;
+   ubigint result;
+   bool carry;
+   for(int i =0; i < ubig_value.size();i++){
+      if(that.ubig_value.size()<i+1){
+         that_digit=0;
+      }else{
+         that_digit=that.ubig_value.at(i);
+      }
+      this_digit=ubig_value.at(i);
+      digit=this_digit-that_digit;
+      if(carry){
+         digit = digit-1;
+         carry=false;
+      }
+      if(digit<0){
+         digit = digit+10;
+         carry = true;
+      }
+      result.push_back(digit);
+   }
+   trim(result);
+   return result;
 }
 
 ubigint ubigint::operator* (const ubigint& that) const {
-   return ubigint (uvalue * that.uvalue);
+   //return ubigint (uvalue * that.uvalue);
+   ubigint result;
+   
 }
 
 void ubigint::multiply_by_2() {
-   uvalue *= 2;
+   ubig_value= ubig_value + ubig_value
 }
 
 void ubigint::divide_by_2() {
@@ -93,4 +143,5 @@ bool ubigint::operator< (const ubigint& that) const {
 ostream& operator<< (ostream& out, const ubigint& that) { 
    return out << "ubigint(" << that.uvalue << ")";
 }
+
 
