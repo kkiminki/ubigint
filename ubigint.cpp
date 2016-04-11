@@ -104,28 +104,34 @@ ubigint ubigint::operator* (const ubigint& that) const {
 }
 
 void ubigint::multiply_by_2() {
-   ubig_value = this + this
+   *this = *this + *this;
 }
 
 void ubigint::divide_by_2() {
-   uvalue /= 2;
+   for(unsigned int i=0; i<ubig_value.size();i++){
+      if(i==ubig_value.size()-1 or ubig_value.at(i+1)%2==0){
+         ubig_value[i] = ubig_value[i]/2;
+      }else{
+         ubig_value[i] = (ubig_value[i]/2) + 5;
+      }
+   }
 }
 
 
 struct quo_rem { ubigint quotient; ubigint remainder; };
 quo_rem udivide (const ubigint& dividend, ubigint divisor) {
    // Note: divisor is modified so pass by value (copy).
-   ubigint zero {0};
+   ubigint zero {"0"};
    if (divisor == zero) throw domain_error ("udivide by zero");
-   ubigint power_of_2 {1};
-   ubigint quotient {0};
+   ubigint power_of_2 {"1"};
+   ubigint quotient {"0"};
    ubigint remainder {dividend}; // left operand, dividend
    while (divisor < remainder) {
       divisor.multiply_by_2();
       power_of_2.multiply_by_2();
    }
    while (power_of_2 > zero) {
-      if (divisor <= remainder) {
+      if (divisor < remainder or divisor==remainder) {
          remainder = remainder - divisor;
          quotient = quotient + power_of_2;
       }
@@ -144,21 +150,26 @@ ubigint ubigint::operator% (const ubigint& that) const {
 }
 
 bool ubigint::operator== (const ubigint& that) const {
-   if(ubig_value.size() != that.size()) return false;
-   for(int i=0; i<ubig_value.size();i++){
-      if(ubig_value.at(i)!=that.ubig_value) return false;
+   if(ubig_value.size() != that.ubig_value.size()) return false;
+   for(unsigned int i=0; i<ubig_value.size();i++){
+      if(ubig_value.at(i)!=that.ubig_value.at(i)) return false;
    }
    return true;
 }
 
 bool ubigint::operator< (const ubigint& that) const {
-   return uvalue < that.uvalue;
+   if(ubig_value.size()<that.ubig_value.size()) return true;
+   for(int i=ubig_value.size()-1;i >=0; i--){
+      if(ubig_value.at(i) < that.ubig_value.at(i))return true;
+   }
+   return false;
 }
 
 ostream& operator<< (ostream& out, const ubigint& that) {
-   out << "ubigint("; 
+   string output = "ubigint("; 
    for(int i=that.ubig_value.size()-1; i>=0;i--){
-      out << that.ubig_value.at(i)+'0';
+      output +=that.ubig_value.at(i)+'0';
    }
-   out << ")";
+   output+=")";
+   return out << output;
 }
