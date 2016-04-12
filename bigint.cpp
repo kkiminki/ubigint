@@ -10,7 +10,8 @@ using namespace std;
 #include "debug.h"
 #include "relops.h"
 
-/*bigint::bigint (long that): uvalue (that), is_negative (that < 0) {
+/*
+bigint::bigint (long that): uvalue (that), is_negative (that < 0) {
 
    DEBUGF ('~', this << " -> " << uvalue)
 }
@@ -34,16 +35,16 @@ bigint bigint::operator- () const {
 }
 
 bigint bigint::operator+ (const bigint& that) const {
-   ubigint result;
+   bigint result;
    if(is_negative==that.is_negative){
-      result = uvalue + that.uvalue;
+      result.uvalue = uvalue + that.uvalue;
       result.is_negative = is_negative;
    }else{
       if(uvalue < that.uvalue){
-         result = that.uvalue - value;
+         result.uvalue = that.uvalue - uvalue;
          result.is_negative = not is_negative;
       }else{
-         result = uvalue - that.uvalue;
+         result.uvalue = uvalue - that.uvalue;
          result.is_negative = is_negative;
       }
    }
@@ -51,22 +52,52 @@ bigint bigint::operator+ (const bigint& that) const {
 }
 
 bigint bigint::operator- (const bigint& that) const {
-   ubigint result = uvalue - that.uvalue;
+   bigint result;
+   if(is_negative==that.is_negative){
+      if(uvalue < that.uvalue){
+         result.uvalue = that.uvalue - uvalue;
+         result.is_negative = not is_negative;
+      }else{
+         result.uvalue = uvalue - that.uvalue;
+         result.is_negative = is_negative;
+      }
+   }else{
+      result.uvalue = uvalue + that.uvalue;
+      result.is_negative = is_negative;
+   }
    return result;
 }
 
 bigint bigint::operator* (const bigint& that) const {
-   bigint result = uvalue * that.uvalue;
+   bigint result;
+   result.uvalue = uvalue * that.uvalue;
+   if(is_negative == that.is_negative){
+      result.is_negative=false;
+   }else{
+      result.is_negative=true;
+   }
    return result;
 }
 
 bigint bigint::operator/ (const bigint& that) const {
-   bigint result = uvalue / that.uvalue;
+   bigint result;
+   result.uvalue = uvalue / that.uvalue;
+   if(is_negative == that.is_negative){
+      result.is_negative=false;
+   }else{
+      result.is_negative=true;
+   }
    return result;
 }
 
 bigint bigint::operator% (const bigint& that) const {
-   bigint result = uvalue % that.uvalue;
+   bigint result;
+   result.uvalue = uvalue % that.uvalue;
+   if(is_negative == that.is_negative){
+      result.is_negative=false;
+   }else{
+      result.is_negative=true;
+   }
    return result;
 }
 

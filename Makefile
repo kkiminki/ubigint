@@ -51,6 +51,18 @@ ${DEPFILE} :
 again :
 	${GMAKE} spotless dep ci all lis
 
+submit :
+	submit cmps109-wm.s16 asg1 ${ALLSOURCES} README PARTNER
+
+testsub : 
+	cp testsub ${ALLSOURCES} README PARTNER
+
+cleansub:
+	cd testsub
+	rm *
+	cd ..
+	rmdir testsub
+
 ifeq (${NEEDINCL}, )
 include ${DEPFILE}
 endif

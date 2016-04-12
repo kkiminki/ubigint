@@ -15,12 +15,12 @@ using namespace std;
 
 ubigint::ubigint (const string& that): ubig_value(0) {
    int i;
-   int place=0;
+   //int place=0;
    udigit_t digit;
    for (i = that.size()-1;i>=0;i--){
-      place++;
+      //place++;
       digit = that[i];
-      ubig_value.push_back(place * 10 + digit - '0');
+      ubig_value.push_back( digit - '0');
    }
    
 }
@@ -39,17 +39,18 @@ ubigint ubigint::operator+ (const ubigint& that) const {
       }if(that.ubig_value.size() < i+1){
          that_digit = 0;
       }else{
-         that_digit = ubig_value.at(i);
+         that_digit = that.ubig_value.at(i);
       }
-      digit = (this_digit + that_digit);
+      digit = this_digit + that_digit;
       if(carry){
          digit = digit + 1;
          carry = false;
       }
-      if(digit/10 > 0) carry = true;
+      if((digit)/(10) > 0) carry = true;
       digit = digit%10;
       result.ubig_value.push_back(digit);
    }
+   if(carry)result.ubig_value.push_back(1);
    while(result.ubig_value.size()>0 and result.ubig_value.back()==0) result.ubig_value.pop_back();
    return result;
 }
@@ -60,9 +61,9 @@ ubigint ubigint::operator- (const ubigint& that) const {
    udigit_t this_digit, that_digit;
    int digit;
    ubigint result;
-   bool carry;
+   bool carry=false;
    for(unsigned int i =0; i < ubig_value.size();i++){
-      if(that.ubig_value.size()<i+1){
+      if(that.ubig_value.size()-1<i){
          that_digit=0;
       }else{
          that_digit=that.ubig_value.at(i);
@@ -77,6 +78,7 @@ ubigint ubigint::operator- (const ubigint& that) const {
          digit = digit+10;
          carry = true;
       }
+      //digit = digit%10;
       result.ubig_value.push_back(digit);
    }
    while(result.ubig_value.size()>0 and result.ubig_value.back()==0) result.ubig_value.pop_back();
@@ -158,11 +160,15 @@ bool ubigint::operator== (const ubigint& that) const {
 }
 
 bool ubigint::operator< (const ubigint& that) const {
-   if(ubig_value.size()<that.ubig_value.size()) return true;
+   if(ubig_value.size()>that.ubig_value.size()){return false;}
    for(int i=ubig_value.size()-1;i >=0; i--){
       if(ubig_value.at(i) < that.ubig_value.at(i))return true;
    }
    return false;
+}
+
+bool ubigint::operator> (const ubigint& that) const{
+   return not ((*this<that) or (*this==that));
 }
 
 ostream& operator<< (ostream& out, const ubigint& that) {
